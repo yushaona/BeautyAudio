@@ -16,19 +16,19 @@
   <!-- 底部导航栏 -->
   <view class='bottomAudio'>
     <cover-view class="play-btn">
-      <cover-image bindtap="playMusic" class="play-btn-like-img" src="{{likebtn}}" background-size="cover"></cover-image>
+      <cover-image  class="play-btn-like-img" src="{{likebtn}}" background-size="cover"></cover-image>
     </cover-view>
     <cover-view class="play-btn">
-      <cover-image bindtap="playMusic" class="play-btn-pre-img" src="{{prebtn}}" background-size="cover" bindtap="clickPre"></cover-image>
+      <cover-image  class="play-btn-pre-img" src="{{prebtn}}" background-size="cover" bindtap="clickPre"></cover-image>
     </cover-view>
     <cover-view class="play-btn">
-      <cover-image bindtap="playMusic" class="play-btn-img" src="{{playbtn}}" background-size="cover"></cover-image>
+      <cover-image bindtap="playMusic" class="play-btn-img" src="{{isPlay==true?pausebtn:playbtn}}" background-size="cover"></cover-image>
     </cover-view>
     <cover-view class="play-btn">
-      <cover-image bindtap="playMusic" class="play-btn-next-img" src="{{nextbtn}}" background-size="cover" bindtap="clickNext"></cover-image>
+      <cover-image  class="play-btn-next-img" src="{{nextbtn}}" background-size="cover" bindtap="clickNext"></cover-image>
     </cover-view>
     <cover-view class="play-btn">
-      <cover-image bindtap="playMusic" class="play-btn-list-img" src="{{listbtn}}" background-size="cover" bindtap="bindViewTap"></cover-image>
+      <cover-image  class="play-btn-list-img" src="{{listbtn}}" background-size="cover" bindtap="bindViewTap"></cover-image>
     </cover-view>
   </view>
 
@@ -41,5 +41,5 @@
       <cover-view class="{{playIndex==index?'listItem-Des-Playing':'listItem-Des'}}">{{item.musicDes}}</cover-view>
     </cover-view>
   </cover-view>
-  
+
 </view>
