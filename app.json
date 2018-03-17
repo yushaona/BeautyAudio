@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/logs/logs",
+    "pages/audio/audio"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+     "navigationBarBackgroundColor": "#005F8C",
+    "navigationBarTitleText": "简约睡眠Music",
+    "navigationBarTextStyle": "white"
+    
+  }
+}
