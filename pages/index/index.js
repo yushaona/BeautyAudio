@@ -2,13 +2,18 @@
 //获取应用实例
 const app = getApp()
 var colorUtil = require('/util/colordeal.js');
+var cloudUtil = require('/util/cloudAnima.js');
+var netUtil = require('../network/net.js');
+
+
 Page({
   data: {
     playMusicName: '自然风声',
     playMusicDes: '聆听大自然最质朴的声音',
     playBgOrignColor: '#005F8C',//历史颜色
+    playBgOrignColorEnd: '#f0f0f0',//历史颜色  
     playBgClorStart: '#005F8C',//当前颜色
-    playBgClorEnd: '#ffffff',//渐变色
+    playBgClorEnd: '#f0f0f0',//渐变色
     playIndex: 0,//当前播放的索引位置
     isPlay:false,
     userInfo: {},
@@ -31,40 +36,46 @@ Page({
     array: [{
       musicName: '自然风声',
       musicDes: '聆听大自然最质朴的声音',
-      musicImg: '../res/wind.png',
+      musicImg: '../res/wind128.png',
+      musicImgSmall:'../res/wind.png',
       musicBgStart: '#005F8C',
-
+      musicBgEnd:'#f0f0f0'
     }, {
       musicName: '雷雨天气',
       musicDes: '打雷下雨的雨夜',
       musicImg: '../res/rain.png',
-      musicBgStart: '#003162',
-
+      musicImgSmall: '../res/rain48.png',
+      musicBgStart: '#111111',
+      musicBgEnd: '#f0f0f0'
     }, {
       musicName: '沙漠风尘',
       musicDes: '沙漠深处的狂风',
-      musicImg: '../res/rain.png',
+      musicImg: '../res/storm.png',
+      musicImgSmall: '../res/storm48.png',
       musicBgStart: '#B95C00',
-
+      musicBgEnd: '#f0f0f0'
     }, {
       musicName: '林中鸟语',
       musicDes: '林间小鸟的清越啼鸣',
-      musicImg: '../res/rain.png',
+      musicImg: '../res/trees.png',
+      musicImgSmall: '../res/trees48.png',
       musicBgStart: '#119F11',
-
+      musicBgEnd: '#f0f0f0'
     }, {
       musicName: '深海之音',
       musicDes: '大海深处的水泡声音',
-      musicImg: '../res/rain.png',
+      musicImg: '../res/sea.png',
+      musicImgSmall: '../res/sea48.png',
       musicBgStart: '#003973',
-
+      musicBgEnd: '#f0f0f0'
     }]
 
   },
 
   onReady: function () {
     this.drawBg()
-    this.drawAnimaCloud()
+    // cloudUtil.drawAnimaCloud()//白云飘动动画
+    netUtil.getMusicList();
   },
 
   onLoad: function () {
@@ -105,48 +116,7 @@ Page({
   },
 
   onShow() {
-
-
   },
-
-
-  //绘图方式实现白云飘动
-  drawAnimaCloud: function () {
-    var that = this;
-    var deviceWidth;
-    wx.getSystemInfo({
-      success: function (res) {
-        deviceWidth = res.windowWidth;
-      },
-    })
-    // 使用 wx.createContext 获取绘图上下文 context
-    var context = wx.createCanvasContext('cloudCanvas')
-    var i = 0;//白云1速度基数
-    var j = 0;//白芸2速度基数
-    var k = 0;//白芸3速度基数
-
-    setInterval(function () {
-      if (i > deviceWidth) {
-        i = -deviceWidth;
-      }
-
-      if (j > deviceWidth) {
-        j = -deviceWidth;
-      }
-      if (k > deviceWidth) {
-        k = -deviceWidth;
-      }
-      context.drawImage(that.data.cloud1, i - deviceWidth, 0, deviceWidth, 150)
-      context.drawImage(that.data.cloud1, i, 0, deviceWidth, 150)
-      context.drawImage(that.data.cloud2, j, 5, deviceWidth, 150)
-      context.drawImage(that.data.cloud3, k, 10, deviceWidth, 150)
-      context.draw()
-      i += 0.5;
-      j += 1;
-      k += 1.25;
-    }, 50)
-  },
-
   //绘制渐变背景
   drawBg: function () {
     var height;
@@ -179,7 +149,12 @@ Page({
     var duration = 500;
     var step = 50;
     var orignColor = this.data.playBgOrignColor;
+    var orignColorEnd = this.data.playBgOrignColorEnd;
+    
     var destiColor = this.data.playBgClorStart;
+    var destiColorEnd = this.data.playBgClorEnd;
+    
+
     //导航栏渐变
     wx.setNavigationBarColor({
       frontColor: '#ffffff',
@@ -191,7 +166,9 @@ Page({
     });
     //获取渐变颜色值
     var array = [];
+    var arrayEnd=[];
     array = colorUtil.gradient(orignColor, destiColor, step);
+    arrayEnd = colorUtil.gradient(orignColorEnd, destiColorEnd, step);
     var timeStep = duration / array.length;
     console.log(timeStep);
     var i = 0
@@ -200,7 +177,7 @@ Page({
         var context = wx.createCanvasContext('myCanvas')
         const grd = context.createLinearGradient(0, 0, 0, height)
         grd.addColorStop(0, array[i])
-        grd.addColorStop(0.7, '#ffffff')
+        grd.addColorStop(0.7, arrayEnd[i])
         grd.addColorStop(1, array[i])
         context.setFillStyle(grd)
         context.fillRect(0, 0, width, height)
@@ -273,12 +250,15 @@ Page({
   //点击列表item
   clickAlertList: function (event) {
     var origColor = this.data.playBgClorStart;//将当前颜色保存为历史颜色
+    var origColorEnd = this.data.playBgClorEnd;//将当前颜色保存为历史颜色
     this.setData({
       playMusicName: event.currentTarget.dataset.name,
       playMusicDes: event.currentTarget.dataset.des,
       playBgOrignColor: origColor,
       playIndex: event.currentTarget.dataset.id,
       playBgClorStart: event.currentTarget.dataset.bgstart,
+      playBgClorEnd: event.currentTarget.dataset.bgend,
+      playsrc:event.currentTarget.dataset.cover
     })
     this.drawBgAnim()
   },
@@ -299,6 +279,9 @@ Page({
       playBgOrignColor: origColor,
       playIndex: this.data.playIndex + 1,
       playBgClorStart: array[this.data.playIndex + 1].musicBgStart,
+      playBgClorEnd: array[this.data.playIndex + 1].musicBgEnd,
+      playsrc: array[this.data.playIndex + 1].musicImg
+
     })
     this.drawBgAnim()
 
@@ -320,6 +303,8 @@ Page({
       playBgOrignColor: origColor,
       playIndex: this.data.playIndex - 1,
       playBgClorStart: array[this.data.playIndex - 1].musicBgStart,
+      playBgClorEnd: array[this.data.playIndex - 1].musicBgEnd,
+      playsrc: array[this.data.playIndex - 1].musicImg
     })
     this.drawBgAnim()
 
@@ -332,12 +317,15 @@ Page({
     var isp=this.data.isPlay==true?false:true;
     if(isp==true){
       if(backgroundAudioManager.src==null){
-        backgroundAudioManager.title = '此时此刻'
-        backgroundAudioManager.epname = '此时此刻'
-        backgroundAudioManager.singer = '许巍'
-        backgroundAudioManager.coverImgUrl = 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000'
+        backgroundAudioManager.title = this.data.playMusicName
+        backgroundAudioManager.epname = this.data.playMusicDes
+        backgroundAudioManager.singer = '优质睡眠'
+        backgroundAudioManager.coverImgUrl = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1521440401578&di=ec47a4c86e104e436a7696b78290f204&imgtype=0&src=http%3A%2F%2Fpic.2265.com%2Fupload%2F2017-7%2F20177141332134035.png'
         backgroundAudioManager.src = 'http://ws.stream.qqmusic.qq.com/M500001VfvsJ21xFqb.mp3?guid=ffffffff82def4af4b12b3cd9337d5e7&uin=346897220&vkey=6292F51E1E384E061FF02C31F716658E5C81F5594D561F2E88B854E81CAAB7806D5E4F103E55D33C16F3FAC506D1AB172DE8600B37E43FAD&fromtag=46' 
       }else{
+        if (backgroundAudioManager.currentTime == backgroundAudioManager.duration) {
+          backgroundAudioManager.startTime=0;
+        }
         backgroundAudioManager.play();
       }
     }else{
@@ -362,9 +350,12 @@ Page({
         isPlay: false
       })
     })
-    
-
-    
+    //放完监听
+    backgroundAudioManager.onEnded(function(){
+      that.setData({
+        isPlay: false
+      })
+    })  
   },
 
   error(e) {

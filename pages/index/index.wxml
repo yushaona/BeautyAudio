@@ -34,8 +34,8 @@
 
   <!-- 列表弹框 -->
   <cover-view animation="{{animationAlert}}" class="animationAlert">
-    <cover-view bindtap='clickAlertList' data-id="{{index}}" data-name="{{item.musicName}}" data-des="{{item.musicDes}}" data-bgstart='{{item.musicBgStart}}' wx:for="{{array}}" class='listItem'>
-      <cover-image class='listItem-Img' src="{{playIndex==index?voice:item.musicImg}}"></cover-image>
+    <cover-view bindtap='clickAlertList' data-id="{{index}}" data-name="{{item.musicName}}" data-des="{{item.musicDes}}" data-bgstart='{{item.musicBgStart}}' data-bgend='{{item.musicBgEnd}}' data-cover='{{item.musicImg}}' wx:for="{{array}}" class='listItem'>
+      <cover-image class='listItem-Img' src="{{playIndex==index?voice:item.musicImgSmall}}"></cover-image>
       <cover-view class="{{playIndex==index?'listItem-Name-Playing':'listItem-Name'}}">{{item.musicName}}</cover-view>
       <cover-view class="{{playIndex==index?'listItem-Des-Playing':'listItem-Des'}}">-</cover-view>
       <cover-view class="{{playIndex==index?'listItem-Des-Playing':'listItem-Des'}}">{{item.musicDes}}</cover-view>
