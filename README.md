@@ -4,8 +4,7 @@
 
  <img src="./sp1.png" width = "300" height = "534" alt="" align=center />
  <img src="./sp2.png" width = "300" height = "534" alt="" align=center />
- 
- ![](shipin.gif)
+ <img src="./shipin.gif" width = "300" height = "534" alt="" align=center />
 
 
 
